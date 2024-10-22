@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -36,7 +38,7 @@ public class RobotContainer {
   private final Joystick m_controller = new Joystick(0);
 
   // Create SmartDashboard chooser for autonomous routines
-  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   // NOTE: The I/O pin functionality of the 5 exposed I/O pins depends on the
   // hardware "overlay"
@@ -74,6 +76,7 @@ public class RobotContainer {
     // AutonomousDistance(m_drivetrain));
     // m_chooser.addOption("Auto Routine Time", new
     // AutonomousDistance(m_drivetrain));
+    m_chooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData(m_chooser);
   }
 
