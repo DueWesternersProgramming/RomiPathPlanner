@@ -67,7 +67,7 @@ public class DriveSubsystem extends SubsystemBase {
         Units.inchesToMeters(m_leftEncoder.getDistance()), Units.inchesToMeters(m_rightEncoder.getDistance()));
         
 
-    AutoBuilder.configureRamsete(this::getPose, this::resetOdometry, this::getChassisSpeeds, this::driveChassisSpeeds,
+    AutoBuilder.configureRamsete(this::getPose, this::resetOdometry, this::getChassisSpeeds, this::driveChassisSpeeds,0,1,
         new ReplanningConfig(false, true), () -> false, this);
   }
 
