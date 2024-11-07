@@ -9,7 +9,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.TankDrive;
+import frc.robot.commands.TurnDegrees;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.romi.OnBoardIO;
 import edu.wpi.first.wpilibj.romi.OnBoardIO.ChannelMode;
@@ -34,7 +36,7 @@ public class RobotContainer {
   private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
 
   // Assumes a gamepad plugged into channel 0
-  private final Joystick m_controller = new Joystick(0);
+  private final Joystick m_controller = new Joystick(ControllerConstants.CONTROLLER_PORT);
 
   // Create SmartDashboard chooser for autonomous routines
   private SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -66,12 +68,13 @@ public class RobotContainer {
     // Default command is tank drive. This will run unless another command
     // is scheduled over it.
     m_drivetrain.setDefaultCommand(new TankDrive(
-        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> -m_controller.getRawAxis(5)));
+        m_drivetrain, () -> -m_controller.getRawAxis(ControllerConstants.LEFT_DRIVE_AXIS), () -> -m_controller.getRawAxis(ControllerConstants.RIGHT_DRIVE_AXIS)));
 
   }
 
   private void configureAutos() {// Setup SmartDashboard options
     m_chooser = AutoBuilder.buildAutoChooser();
+    m_chooser.addOption("TURN TEST GYRO", new TurnDegrees(0, m_drivetrain));
     SmartDashboard.putData(m_chooser);
   }
 

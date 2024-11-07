@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.romi.RomiGyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Drivetrain;
+import frc.robot.Constants.DrivetrainConstants;
 
 public class DriveSubsystem extends SubsystemBase {
   // The Romi has the left and right motors set to
@@ -36,7 +36,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final DifferentialDrive m_diffDrive = new DifferentialDrive(m_leftMotor::set, m_rightMotor::set);
   private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(
-      Drivetrain.kTrackWidthMeters);
+    DrivetrainConstants.kTrackWidthMeters);
 
   private final RomiGyro m_gyro = new RomiGyro();
 
@@ -59,10 +59,9 @@ public class DriveSubsystem extends SubsystemBase {
     m_rightMotor.setInverted(true);
 
     // Use inches as unit for encoder distances
-    m_leftEncoder.setDistancePerPulse((Math.PI * Drivetrain.kWheelDiameterInch) / Drivetrain.kCountsPerRevolution);
-    m_rightEncoder.setDistancePerPulse((Math.PI * Drivetrain.kWheelDiameterInch) / Drivetrain.kCountsPerRevolution);
+    m_leftEncoder.setDistancePerPulse((Math.PI * DrivetrainConstants.kWheelDiameterInch) / DrivetrainConstants.kCountsPerRevolution);
+    m_rightEncoder.setDistancePerPulse((Math.PI * DrivetrainConstants.kWheelDiameterInch) / DrivetrainConstants.kCountsPerRevolution);
     resetEncoders();
-
     m_odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(getGyroAngleDegrees())),
         Units.inchesToMeters(m_leftEncoder.getDistance()), Units.inchesToMeters(m_rightEncoder.getDistance()));
         
@@ -80,8 +79,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void arcadeDriveSpeedsMetersPerSec(double x, double rot) {
     // Convert from meters per second to percentage of max speed (-1.0 to 1.0)
-    double xPercent = x / Drivetrain.kMaxSpeedMetersPerSecond;
-    double rotPercent = rot / Drivetrain.kMaxSpeedMetersPerSecond;
+    double xPercent = x / DrivetrainConstants.kMaxSpeedMetersPerSecond;
+    double rotPercent = rot / DrivetrainConstants.kMaxSpeedMetersPerSecond;
 
     // Ensure the values stay within the range of -1.0 to 1.0
     xPercent = Math.max(Math.min(xPercent, 1.0), -1.0);
@@ -170,14 +169,14 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getGyroAngleDegrees() {
-    return -m_gyro.getAngle();
+    return m_odometry.getPoseMeters().getRotation().getDegrees();
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
   }
   private void updateOdometry(){
-    m_odometry.update(new Rotation2d(Math.toRadians(getGyroAngleDegrees())), Units.inchesToMeters(m_leftEncoder.getDistance()), Units.inchesToMeters(m_rightEncoder.getDistance()));
+    m_odometry.update(new Rotation2d(Math.toRadians(-m_gyro.getAngleZ())), Units.inchesToMeters(m_leftEncoder.getDistance()), Units.inchesToMeters(m_rightEncoder.getDistance()));
     m_field2d.setRobotPose(getPose());
   }
 
