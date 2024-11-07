@@ -8,10 +8,10 @@ import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.Supplier;
 
-public class ArcadeDrive extends Command {
+public class TankDrive extends Command {
   private final DriveSubsystem m_drivetrain;
-  private final Supplier<Double> m_xaxisSpeedSupplier;
-  private final Supplier<Double> m_zaxisRotateSupplier;
+  private final Supplier<Double> leftSupplier;
+  private final Supplier<Double> rightSupplier;
 
   /**
    * Creates a new ArcadeDrive. This command will drive your robot according to
@@ -23,30 +23,32 @@ public class ArcadeDrive extends Command {
    * @param xaxisSpeedSupplier  Lambda supplier of forward/backward speed
    * @param zaxisRotateSupplier Lambda supplier of rotational speed
    */
-  public ArcadeDrive(
+  public TankDrive(
       DriveSubsystem drivetrain,
-      Supplier<Double> xaxisSpeedSupplier,
-      Supplier<Double> zaxisRotateSupplier) {
+      Supplier<Double> leftSupplier,
+      Supplier<Double> rightSupplier) {
     m_drivetrain = drivetrain;
-    m_xaxisSpeedSupplier = xaxisSpeedSupplier;
-    m_zaxisRotateSupplier = zaxisRotateSupplier;
+    this.leftSupplier = leftSupplier;
+    this.rightSupplier = rightSupplier;
     addRequirements(drivetrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_drivetrain.tankDrive(0,0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.arcadeDrive(m_xaxisSpeedSupplier.get(), m_zaxisRotateSupplier.get());
+    m_drivetrain.tankDrive(leftSupplier.get(), rightSupplier.get());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_drivetrain.tankDrive(0,0);
   }
 
   // Returns true when the command should end.

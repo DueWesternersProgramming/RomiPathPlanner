@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.romi.RomiGyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Drivetrain;
 
@@ -62,7 +64,8 @@ public class DriveSubsystem extends SubsystemBase {
     resetEncoders();
 
     m_odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(getGyroAngleDegrees())),
-        m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+        Units.inchesToMeters(m_leftEncoder.getDistance()), Units.inchesToMeters(m_rightEncoder.getDistance()));
+        
 
     AutoBuilder.configureRamsete(this::getPose, this::resetOdometry, this::getChassisSpeeds, this::driveChassisSpeeds,
         new ReplanningConfig(false, true), () -> false, this);
@@ -70,6 +73,9 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
+  }
+  public void tankDrive(double leftSpeed, double rightSpeed) {
+    m_diffDrive.tankDrive(leftSpeed, rightSpeed);
   }
 
   public void arcadeDriveSpeedsMetersPerSec(double x, double rot) {
@@ -102,8 +108,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
     // m_odometry.resetPosition(pose, m_gyro.getRotation2d());
-    m_odometry.resetPosition(new Rotation2d(Math.toRadians(getGyroAngleDegrees())), m_leftEncoder.getDistance(),
-        m_rightEncoder.getDistance(), pose);
+    m_odometry.resetPosition(new Rotation2d(Math.toRadians(getGyroAngleDegrees())), Units.inchesToMeters(m_leftEncoder.getDistance()), Units.inchesToMeters(m_rightEncoder.getDistance()), pose);
   }
 
   public int getLeftEncoderCount() {
@@ -158,25 +163,31 @@ public class DriveSubsystem extends SubsystemBase {
     m_gyro.reset();
   }
 
-  @Override
-  public void periodic() {
-    m_odometry.update(new Rotation2d(Math.toRadians(getGyroAngleDegrees())), m_leftEncoder.getDistance(),
-        m_rightEncoder.getDistance());
-    m_field2d.setRobotPose(getPose());
-
-    // This method will be called once per scheduler run
-  }
+  
 
   public Pose2d getPose() {
     return m_odometry.getPoseMeters();
   }
 
   public double getGyroAngleDegrees() {
-    return m_gyro.getAngle();
+    return -m_gyro.getAngle();
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+  }
+  private void updateOdometry(){
+    m_odometry.update(new Rotation2d(Math.toRadians(getGyroAngleDegrees())), Units.inchesToMeters(m_leftEncoder.getDistance()), Units.inchesToMeters(m_rightEncoder.getDistance()));
+    m_field2d.setRobotPose(getPose());
+  }
+
+  @Override
+  public void periodic() {
+    updateOdometry();
+    
+    SmartDashboard.putData("Pose2d", m_field2d);
+
+    // This method will be called once per scheduler run
   }
 
 }

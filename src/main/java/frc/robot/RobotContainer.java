@@ -9,8 +9,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ArcadeDrive;
-import frc.robot.commands.AutonomousDistance;
+import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.romi.OnBoardIO;
 import edu.wpi.first.wpilibj.romi.OnBoardIO.ChannelMode;
@@ -64,18 +63,14 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    // Default command is arcade drive. This will run unless another command
+    // Default command is tank drive. This will run unless another command
     // is scheduled over it.
-    m_drivetrain.setDefaultCommand(new ArcadeDrive(
-        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> -m_controller.getRawAxis(2)));
+    m_drivetrain.setDefaultCommand(new TankDrive(
+        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> -m_controller.getRawAxis(5)));
 
   }
 
   private void configureAutos() {// Setup SmartDashboard options
-    // m_chooser.setDefaultOption("Auto Routine Distance", new
-    // AutonomousDistance(m_drivetrain));
-    // m_chooser.addOption("Auto Routine Time", new
-    // AutonomousDistance(m_drivetrain));
     m_chooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData(m_chooser);
   }
