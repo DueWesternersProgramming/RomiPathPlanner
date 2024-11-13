@@ -62,7 +62,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_leftEncoder.setDistancePerPulse((Math.PI * DrivetrainConstants.kWheelDiameterInch) / DrivetrainConstants.kCountsPerRevolution);
     m_rightEncoder.setDistancePerPulse((Math.PI * DrivetrainConstants.kWheelDiameterInch) / DrivetrainConstants.kCountsPerRevolution);
     resetEncoders();
-    m_odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(getGyroAngleDegrees())),
+    m_odometry = new DifferentialDriveOdometry(new Rotation2d(0),
         Units.inchesToMeters(m_leftEncoder.getDistance()), Units.inchesToMeters(m_rightEncoder.getDistance()));
         
 

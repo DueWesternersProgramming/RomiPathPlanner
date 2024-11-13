@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.TankDrive;
-import frc.robot.commands.TurnDegrees;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.romi.OnBoardIO;
 import edu.wpi.first.wpilibj.romi.OnBoardIO.ChannelMode;
@@ -74,7 +73,6 @@ public class RobotContainer {
 
   private void configureAutos() {// Setup SmartDashboard options
     m_chooser = AutoBuilder.buildAutoChooser();
-    m_chooser.addOption("TURN TEST GYRO", new TurnDegrees(0, m_drivetrain));
     SmartDashboard.putData(m_chooser);
   }
 
